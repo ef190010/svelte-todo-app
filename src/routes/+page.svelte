@@ -21,7 +21,7 @@
     <ul>
         {#each todos as todo (todo.id)}
             <li>
-                <input type="checkbox" />
+                <input type="checkbox" bind:checked={todo.done}/>
                 <span class={todo.done ? "done" : ""}>{todo.text}</span>
                 <button>削除</button>
             </li>
