@@ -1,15 +1,33 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     interface Todo {
         id: string;
         text: string;
         done: boolean;
     }
 
-    const todos: Todo[] = $state([
-        {id: crypto.randomUUID(), text: "ミーティング資料を作る", done: false},
-        {id: crypto.randomUUID(), text: "プルリクエストをレビューする", done: true},
-        {id: crypto.randomUUID(), text: "本番リリースする", done: false},
-    ]);
+    const todos: Todo[] = $state([]);
+    // Sample: todos
+    // [
+    //     {id: crypto.randomUUID(), text: "ミーティング資料を作る", done: false},
+    //     {id: crypto.randomUUID(), text: "プルリクエストをレビューする", done: true},
+    //     {id: crypto.randomUUID(), text: "本番リリースする", done: false},
+    // ]
+
+    let isInitialized = $state(false);
+
+    $effect(() => {
+        if (isInitialized && typeof window !== "undefined") {
+            saveTodos();
+        }
+    });
+
+    onMount(() => {
+        if (!isInitialized && typeof window !== "undefined") {
+            loadTodos();
+            isInitialized = true;
+        }
+    });
 
     let newTodoText: string = $state("");
     function addTodo() {
@@ -28,6 +46,27 @@
 
     function deleteTodo(index: number) {
         todos.splice(index, 1);
+    }
+
+    function saveTodos() {
+        try {
+            localStorage.setItem("todos", JSON.stringify(todos));
+        } catch (e) {
+            console.error("Failed to save todos to localStorage:", e);
+        }
+    }
+
+    function loadTodos() {
+        try {
+            const saved = localStorage.getItem("todos");
+            const parsed: Todo[] = saved ? JSON.parse(saved) : [];
+            if (parsed) {
+                todos.push(...parsed);
+            }
+        } catch (e) {
+            console.error("Failed to load todos from localStorage:", e);
+            return;
+        }
     }
 
 </script>
