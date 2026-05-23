@@ -1,22 +1,37 @@
 <script lang="ts">
     interface Todo {
-        id: number;
+        id: string;
         text: string;
         done: boolean;
     }
 
     const todos: Todo[] = $state([
-        {id: 1, text: "ミーティング資料を作る", done: false},
-        {id: 2, text: "プルリクエストをレビューする", done: true},
-        {id: 3, text: "本番リリースする", done: false},
+        {id: crypto.randomUUID(), text: "ミーティング資料を作る", done: false},
+        {id: crypto.randomUUID(), text: "プルリクエストをレビューする", done: true},
+        {id: crypto.randomUUID(), text: "本番リリースする", done: false},
     ]);
+
+    let newTodoText: string = $state("");
+    function addTodo() {
+        if (newTodoText.trim() === "") {
+            return;
+        }
+
+        const newTodo: Todo = {
+            id: crypto.randomUUID(),
+            text: newTodoText,
+            done: false
+        };
+        todos.push(newTodo);
+        newTodoText = "";
+    }
 
 </script>
 
 <main>
     <h1>Todo App</h1>
-    <input type="text" placeholder="新しいtodo..."/>
-    <button>追加</button>
+    <input type="text" placeholder="新しいtodo..." bind:value={newTodoText}/>
+    <button onclick={addTodo} disabled={newTodoText.trim() === ""}>追加</button>
 
     <ul>
         {#each todos as todo (todo.id)}
