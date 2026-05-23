@@ -30,7 +30,12 @@
 
 <main>
     <h1>Todo App</h1>
-    <input type="text" placeholder="新しいtodo..." bind:value={newTodoText}/>
+    <input
+      type="text" 
+      placeholder="新しいtodo..." 
+      bind:value={newTodoText}
+      onkeydown={(e) => e.key === "Enter" && addTodo()}
+    />
     <button onclick={addTodo} disabled={newTodoText.trim() === ""}>追加</button>
 
     <ul>
